@@ -1,0 +1,42 @@
+TP Module 3 — Réponses
+
+Étape 1 — Lire l'arbre
+- count(//etudiant) = 12
+- count(//note) = 34
+- count(//etudiant[email]) = 9
+- La dernière expression compte uniquement les étudiants qui possèdent un élément email. Trois étudiants n'ont pas d'email.
+
+Étape 2 — XPath
+2a. //etudiant[@classe='L1-B']/nom
+Résultats : Ba, Gueye, Faye, Cissé, Diouf, Kane.
+
+2b. //etudiant[not(email)]/@matricule
+Résultats : ISEP26-002, ISEP26-006, ISEP26-012.
+
+2c. //etudiant[@matricule='ISEP26-007']/notes/note[@matiere='XPath']/text()
+Résultat : 16.
+
+2d. count(//etudiant[count(notes/note) < 3])
+Résultat : 2 étudiants (Faye et Mbaye).
+
+2e. sum(//note[@matiere='XML']) div count(//note[@matiere='XML'])
+Résultat : 11.916666... (environ 11.92).
+
+2f. count(//etudiant[(sum(notes/note) div count(notes/note)) >= 10])
+Attention : XPath 1.0 ne permet pas sum() directement sur un ensemble de nœuds relatif à chaque étudiant dans un prédicat de cette manière. Pour calculer ce nombre dans une feuille XSLT, il faut parcourir les étudiants et tester leur moyenne. Résultat : 9.
+
+2g. //etudiant[notes/note[@matiere='XSD' and number(.) > 15]]/@matricule
+Résultats : ISEP26-001 et ISEP26-011.
+
+2h. //etudiant[@classe='L1-A'][last()]/prenom
+Résultat : Ndèye.
+L'expression //etudiant[last()][@classe='L1-A']/prenom renvoie un ensemble vide : last() sélectionne d'abord le dernier étudiant parmi les enfants etudiant de promotion (Kane, en L1-B), puis le filtre L1-A l'élimine. Pour obtenir le dernier étudiant de L1-A, on filtre d'abord la classe, puis on applique [last()].
+
+Étape 3 — Feuille liste.xsl
+La feuille liste.xsl du dossier produit une liste HTML avec un élément li par étudiant grâce à xsl:apply-templates et au modèle match="etudiant".
+
+Étapes 4 à 8 — tableau.xsl
+La feuille tableau.xsl produit une page HTML complète, lie style.css, calcule les moyennes, affiche les emails manquants, le résultat selon le paramètre seuil, trie les étudiants par moyenne décroissante et affiche les rangs. Elle affiche aussi les statistiques et un tableau par classe.
+
+Étape 9 — Bonus
+Le CSS a été personnalisé : les variables --bleu et --vert et le style .major td ont été modifiés. Dans tableau.xsl, xsl:attribute est placé avant les cellules enfants du tr. En XSLT, un attribut doit être créé avant tout contenu enfant de l'élément concerné ; placé après un élément enfant, il provoque une erreur ou n'est pas ajouté selon le processeur.
